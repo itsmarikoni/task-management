@@ -270,7 +270,35 @@ erDiagram
     }
 ```
 
-### 8.2 補足
+### 8.2 テーブル定義
+
+**columns テーブル**
+
+| カラム名 | 型 | PK | FK | NULL | デフォルト | 説明 |
+|---|---|---|---|---|---|---|
+| id | INTEGER | ○ | | NOT NULL | 自動採番 | カラムID |
+| name | VARCHAR(50) | | | NOT NULL | - | カラム名 |
+| order | INTEGER | | | NOT NULL | - | 表示順 |
+| created_at | DATETIME | | | NOT NULL | 作成時刻 | 作成日時 |
+| updated_at | DATETIME | | | NOT NULL | 更新時刻 | 更新日時 |
+
+**cards テーブル**
+
+| カラム名 | 型 | PK | FK | NULL | デフォルト | 説明 |
+|---|---|---|---|---|---|---|
+| id | INTEGER | ○ | | NOT NULL | 自動採番 | カードID |
+| column_id | INTEGER | | ○(columns.id) | NOT NULL | - | 所属カラム |
+| title | VARCHAR(100) | | | NOT NULL | - | タイトル |
+| description | TEXT | | | NULL可 | - | 説明文 |
+| priority | VARCHAR(10) | | | NOT NULL | "中" | 優先度(高/中/低) |
+| due_date | DATE | | | NULL可 | - | 期限 |
+| order | INTEGER | | | NOT NULL | - | カラム内の表示順 |
+| created_at | DATETIME | | | NOT NULL | 作成時刻 | 作成日時 |
+| updated_at | DATETIME | | | NOT NULL | 更新時刻 | 更新日時 |
+
+- `cards.column_id` は `columns.id` への外部キー。カラム削除時は、そのカラムに属するカードも連動して削除する(カスケード削除)。
+
+### 8.3 補足
 
 - ボードは1つのみのため、ボードをエンティティとしては持たない(カラム・カードのみで管理する)。
 - カード・カラムそれぞれに表示順(`order`)を持たせ、ドラッグ&ドロップによる並べ替えを可能にする。
