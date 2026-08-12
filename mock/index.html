@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>タスク管理ボード（モック）</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>タスク管理ボード</h1>
+    <button id="add-column-btn" class="btn btn-primary">＋ カラム追加</button>
+  </header>
+
+  <main id="board" class="board"></main>
+
+  <!-- カード詳細（編集）モーダル -->
+  <div id="card-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>カード詳細</h2>
+        <button id="card-close-btn" class="icon-btn" aria-label="閉じる">×</button>
+      </div>
+      <div class="modal-body">
+        <label>
+          タイトル
+          <input type="text" id="card-title" placeholder="タイトルを入力">
+        </label>
+        <label>
+          説明文
+          <textarea id="card-description" rows="4" placeholder="説明文を入力"></textarea>
+        </label>
+        <label>
+          優先度
+          <select id="card-priority">
+            <option value="高">高</option>
+            <option value="中" selected>中</option>
+            <option value="低">低</option>
+          </select>
+        </label>
+        <label>
+          期限
+          <input type="date" id="card-due-date">
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button id="card-delete-btn" class="btn btn-danger">削除</button>
+        <button id="card-save-btn" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 削除確認ダイアログ -->
+  <div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal modal-small">
+      <div class="modal-header">
+        <h2>確認</h2>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message"></p>
+      </div>
+      <div class="modal-footer">
+        <button id="confirm-cancel-btn" class="btn btn-secondary">キャンセル</button>
+        <button id="confirm-ok-btn" class="btn btn-danger">削除する</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
