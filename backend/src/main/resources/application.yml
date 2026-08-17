@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: task-management
+  # PostgreSQL未セットアップのため、DB自動接続を一時的に無効化(セットアップ後に削除)
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration
+      - org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
+      - org.springframework.boot.jdbc.autoconfigure.DataSourceInitializationAutoConfiguration
