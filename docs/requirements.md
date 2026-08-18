@@ -50,7 +50,7 @@ ER図、テーブル定義(columns / cards)、設計上の補足事項をまと�
 ### 7.1 データ保存
 
 - ブラウザやキャッシュ削除に依存せず、データを永続的に保存する。
-- データベース(PostgreSQL)を用いて永続化する。
+- データベース(PostgreSQL 17)を用いて永続化する。
 
 ### 7.2 動作環境
 
@@ -70,6 +70,6 @@ ER図、テーブル定義(columns / cards)、設計上の補足事項をまと�
 
 ## 8. 技術スタック
 
-バックエンドに Java / Spring Boot、フロントエンドに React、データベースに PostgreSQL を採用する。
+バックエンドに Java / Spring Boot、フロントエンドに React、データベースに PostgreSQL 17 を採用する。
 
 → 詳細は [技術スタック](tech-stack.md) を参照。

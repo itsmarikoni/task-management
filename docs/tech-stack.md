@@ -30,7 +30,7 @@
 
 | 項目 | 選定 |
 |---|---|
-| DBMS | PostgreSQL |
+| DBMS | PostgreSQL 17 |
 | マイグレーション | Flyway |
 
 ## 4. 開発・実行環境
