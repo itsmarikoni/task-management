@@ -1,0 +1,11 @@
+name: Chore
+description: リファクタリング・依存関係更新・設定変更など
+title: "[Chore] "
+labels: ["chore"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+    validations:
+      required: true
