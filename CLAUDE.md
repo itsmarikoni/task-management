@@ -55,3 +55,24 @@ git checkout -b feature/12-add-login
 4. `gh pr create` — open PR referencing the issue, target `main`
 5. Get review/approval
 6. Merge via PR (never direct push), delete the branch
+
+## Local Dev Server Ports (MUST follow strictly)
+
+The app's servers must always run on their configured default ports. Never fall back to a different port to dodge a conflict — that silently breaks the frontend/backend wiring (Vite proxy target, CORS origin, etc.), so a server "running" on the wrong port is treated as not running.
+
+- Backend (Spring Boot): **8080** (default, unconfigured in `backend/src/main/resources/application.yml`)
+- Frontend (Vite dev server): **5173** (default)
+
+When starting either server:
+
+1. Check whether the target port is already in use.
+2. If it's in use by a stray/previous instance of *this same app*, stop that process first, then start the server on its default port.
+3. If it's in use by something unrelated, tell the user and ask how to proceed — do not silently start on an alternate port.
+4. Never accept or suggest `--port <other>` / `vite --port` / `server.port=<other>` as a workaround for a busy default port.
+
+On Windows, find and stop the process holding a port with:
+
+```
+netstat -ano | findstr :8080
+taskkill /PID <pid> /F
+```
