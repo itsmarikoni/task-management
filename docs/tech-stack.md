@@ -4,41 +4,44 @@
 
 ## 1. バックエンド
 
-| 項目 | 選定 |
-|---|---|
-| 言語 | Java |
-| フレームワーク | Spring Boot |
-| ビルドツール | Gradle |
-| ORM | Spring Data JPA (Hibernate) |
-| API方式 | REST API |
-| バリデーション | Bean Validation (Jakarta Validation) |
+| 項目 | 選定 | バージョン |
+|---|---|---|
+| 言語 | Java | 25 |
+| フレームワーク | Spring Boot | 4.1.0 |
+| ビルドツール | Gradle | 9.5.1 |
+| ORM | Spring Data JPA (Hibernate) | Spring Boot 4.1.0 管理下 |
+| API方式 | REST API | - |
+| バリデーション | Bean Validation (Jakarta Validation) | Spring Boot 4.1.0 管理下 |
 
 ## 2. フロントエンド
 
-| 項目 | 選定 |
-|---|---|
-| フレームワーク | React |
-| 言語 | TypeScript |
-| ビルドツール | Vite |
-| ドラッグ&ドロップ | dnd kit |
-| HTTPクライアント | Axios |
-| スタイリング | Tailwind CSS |
+| 項目 | 選定 | バージョン |
+|---|---|---|
+| フレームワーク | React | 19.2.8 |
+| 言語 | TypeScript | 6.0.2 |
+| ビルドツール | Vite | 8.2.0 |
+| ドラッグ&ドロップ | dnd kit | (未導入・今後追加予定) |
+| HTTPクライアント | Axios | 1.19.0 |
+| スタイリング | Tailwind CSS | 4.3.3 |
+| Lint | oxlint | 1.75.0 |
+| パッケージ管理 | npm | - |
 
 - Next.js は今回のスコープ対象外とする(素の React 構成)。
 
 ## 3. データベース
 
-| 項目 | 選定 |
-|---|---|
-| DBMS | PostgreSQL 17 |
-| マイグレーション | Flyway |
+| 項目 | 選定 | バージョン |
+|---|---|---|
+| DBMS | PostgreSQL | 17 |
+| マイグレーション | Flyway | (未導入・今後追加予定) |
 
 ## 4. 開発・実行環境
 
-| 項目 | 選定 |
-|---|---|
-| コンテナ | Docker / Docker Compose |
-| パッケージ管理(FE) | npm |
-| APIドキュメント | springdoc-openapi (Swagger UI) |
-| テスト(BE) | JUnit 5 + Spring Boot Test |
-| テスト(FE) | Vitest + React Testing Library |
+| 項目 | 選定 | バージョン |
+|---|---|---|
+| コンテナ | Docker / Docker Compose | - |
+| パッケージ管理(FE) | npm | - |
+| バージョン管理 | Git + GitHub | - |
+| APIドキュメント | springdoc-openapi (Swagger UI) | (未導入・今後追加予定) |
+| テスト(BE) | JUnit 5 + Spring Boot Test | Spring Boot 4.1.0 管理下 |
+| テスト(FE) | Vitest + React Testing Library | (未導入・今後追加予定) |
