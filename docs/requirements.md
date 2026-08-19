@@ -70,6 +70,6 @@ ER図、テーブル定義(columns / cards)、設計上の補足事項をまと�
 
 ## 8. 技術スタック
 
-バックエンドに Java / Spring Boot、フロントエンドに React、データベースに PostgreSQL 17 を採用する。
+バックエンドに Java 25 / Spring Boot 4.1.0、フロントエンドに React 19.2.8 / TypeScript / Vite、データベースに PostgreSQL 17 を採用する。バージョン管理には Git + GitHub を用いる。
 
 → 詳細は [技術スタック](tech-stack.md) を参照。
