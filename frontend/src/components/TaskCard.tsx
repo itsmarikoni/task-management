@@ -1,3 +1,4 @@
+import type { DragEvent } from 'react'
 import type { Card } from '../types'
 
 const priorityStyles: Record<string, string> = {
@@ -9,16 +10,42 @@ const priorityStyles: Record<string, string> = {
 interface TaskCardProps {
   card: Card
   onClick?: () => void
+  onDragStart?: (event: DragEvent<HTMLDivElement>) => void
+  onDragEnd?: (event: DragEvent<HTMLDivElement>) => void
+  onDragOver?: (event: DragEvent<HTMLDivElement>) => void
+  onDrop?: (event: DragEvent<HTMLDivElement>) => void
+  isDragging?: boolean
+  dropIndicator?: 'top' | 'bottom' | null
 }
 
-export function TaskCard({ card, onClick }: TaskCardProps) {
+export function TaskCard({
+  card,
+  onClick,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDrop,
+  isDragging,
+  dropIndicator,
+}: TaskCardProps) {
   const priorityStyle = priorityStyles[card.priority] ?? 'bg-gray-100 text-gray-700'
 
   return (
     <div
+      draggable
       onClick={onClick}
-      className={`rounded-md border border-gray-200 bg-white p-3 shadow-sm ${onClick ? 'cursor-pointer hover:border-gray-300' : ''}`}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      className={`relative rounded-md border border-gray-200 bg-white p-3 shadow-sm ${onClick ? 'cursor-pointer hover:border-gray-300' : ''} ${isDragging ? 'opacity-40' : ''}`}
     >
+      {dropIndicator === 'top' && (
+        <div className="absolute inset-x-0 -top-1 h-0.5 rounded bg-blue-500" />
+      )}
+      {dropIndicator === 'bottom' && (
+        <div className="absolute inset-x-0 -bottom-1 h-0.5 rounded bg-blue-500" />
+      )}
       <p className="text-sm font-medium text-gray-900">{card.title}</p>
       <div className="mt-2 flex items-center justify-between">
         <span className={`rounded px-2 py-0.5 text-xs font-semibold ${priorityStyle}`}>
