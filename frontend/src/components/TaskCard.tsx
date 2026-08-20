@@ -1,3 +1,4 @@
+import type { DragEvent } from 'react'
 import type { Card } from '../types'
 
 const priorityStyles: Record<string, string> = {
@@ -9,15 +10,21 @@ const priorityStyles: Record<string, string> = {
 interface TaskCardProps {
   card: Card
   onClick?: () => void
+  onDragStart?: (event: DragEvent<HTMLDivElement>) => void
+  onDragEnd?: (event: DragEvent<HTMLDivElement>) => void
+  isDragging?: boolean
 }
 
-export function TaskCard({ card, onClick }: TaskCardProps) {
+export function TaskCard({ card, onClick, onDragStart, onDragEnd, isDragging }: TaskCardProps) {
   const priorityStyle = priorityStyles[card.priority] ?? 'bg-gray-100 text-gray-700'
 
   return (
     <div
+      draggable
       onClick={onClick}
-      className={`rounded-md border border-gray-200 bg-white p-3 shadow-sm ${onClick ? 'cursor-pointer hover:border-gray-300' : ''}`}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      className={`rounded-md border border-gray-200 bg-white p-3 shadow-sm ${onClick ? 'cursor-pointer hover:border-gray-300' : ''} ${isDragging ? 'opacity-40' : ''}`}
     >
       <p className="text-sm font-medium text-gray-900">{card.title}</p>
       <div className="mt-2 flex items-center justify-between">

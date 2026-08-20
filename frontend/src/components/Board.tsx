@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Card, Column } from '../types'
 import { getCardsByColumn, getColumns } from '../api/columns'
-import { createCard, updateCard } from '../api/cards'
+import { createCard, updateCard, updateCardPosition } from '../api/cards'
 import { BoardColumn } from './BoardColumn'
 
 const FIXED_COLUMNS = ['未着手', '進行中', '完了']
@@ -97,6 +97,34 @@ export function Board() {
     })
   }
 
+  async function handleMoveCard(cardId: number, targetColumnId: number, afterCardId: number | null) {
+    const sourceColumnId = [...cardsByColumnId.entries()].find(([, cards]) =>
+      cards.some((card) => card.id === cardId),
+    )?.[0]
+    if (sourceColumnId === undefined) return
+
+    const movedCard = await updateCardPosition(cardId, { columnId: targetColumnId, afterCardId })
+
+    setCardsByColumnId((prev) => {
+      const next = new Map(prev)
+
+      const remaining = (next.get(sourceColumnId) ?? []).filter((card) => card.id !== cardId)
+      if (sourceColumnId === targetColumnId) {
+        const insertIndex = afterCardId === null ? 0 : remaining.findIndex((card) => card.id === afterCardId) + 1
+        remaining.splice(insertIndex, 0, movedCard)
+        next.set(targetColumnId, remaining)
+        return next
+      }
+
+      next.set(sourceColumnId, remaining)
+      const destination = [...(next.get(targetColumnId) ?? [])]
+      const insertIndex = afterCardId === null ? 0 : destination.findIndex((card) => card.id === afterCardId) + 1
+      destination.splice(insertIndex, 0, movedCard)
+      next.set(targetColumnId, destination)
+      return next
+    })
+  }
+
   return (
     <div className="flex gap-4 overflow-x-auto p-6">
       {FIXED_COLUMNS.map((label, index) => {
@@ -105,10 +133,12 @@ export function Board() {
         return (
           <BoardColumn
             key={label}
+            columnId={column?.id}
             title={label}
             cards={cards}
             onAddCard={column ? (input) => handleAddCard(column.id, input) : undefined}
             onUpdateCard={column ? (cardId, input) => handleUpdateCard(column.id, cardId, input) : undefined}
+            onMoveCard={column ? handleMoveCard : undefined}
           />
         )
       })}

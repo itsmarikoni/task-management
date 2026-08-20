@@ -1,14 +1,19 @@
 package com.example.taskmanagement.service;
 
 import com.example.taskmanagement.dto.CardCreateRequest;
+import com.example.taskmanagement.dto.CardPositionUpdateRequest;
 import com.example.taskmanagement.dto.CardResponse;
 import com.example.taskmanagement.dto.CardUpdateRequest;
 import com.example.taskmanagement.entity.BoardColumn;
 import com.example.taskmanagement.entity.Card;
 import com.example.taskmanagement.repository.BoardColumnRepository;
 import com.example.taskmanagement.repository.CardRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -73,6 +78,49 @@ public class CardService {
 		card.setDueDate(request.dueDate());
 
 		return CardResponse.from(cardRepository.save(card));
+	}
+
+	@Transactional
+	public CardResponse updateCardPosition(Long id, CardPositionUpdateRequest request) {
+		Card card = cardRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found: " + id));
+
+		BoardColumn column = boardColumnRepository.findById(request.columnId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+						"Column not found: " + request.columnId()));
+
+		List<Card> destinationCards = cardRepository.findAllByColumnIdOrderByDisplayOrderAsc(request.columnId())
+				.stream()
+				.filter(c -> !c.getId().equals(card.getId()))
+				.collect(Collectors.toCollection(ArrayList::new));
+
+		int insertIndex;
+		if (request.afterCardId() == null) {
+			insertIndex = 0;
+		} else {
+			int afterIndex = -1;
+			for (int i = 0; i < destinationCards.size(); i++) {
+				if (destinationCards.get(i).getId().equals(request.afterCardId())) {
+					afterIndex = i;
+					break;
+				}
+			}
+			if (afterIndex == -1) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+						"Card not found: " + request.afterCardId());
+			}
+			insertIndex = afterIndex + 1;
+		}
+
+		destinationCards.add(insertIndex, card);
+		card.setColumn(column);
+
+		for (int i = 0; i < destinationCards.size(); i++) {
+			destinationCards.get(i).setDisplayOrder(i);
+		}
+		cardRepository.saveAll(destinationCards);
+
+		return CardResponse.from(card);
 	}
 
 }
