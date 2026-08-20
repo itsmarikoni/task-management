@@ -17,3 +17,17 @@ export async function sortCardsByColumn(columnId: number, sortKey: CardSortKey):
   const { data } = await apiClient.patch<Card[]>(`/columns/${columnId}/cards/sort`, { sortKey })
   return data
 }
+
+export async function createColumn(name: string): Promise<Column> {
+  const { data } = await apiClient.post<Column>('/columns', { name })
+  return data
+}
+
+export async function updateColumn(columnId: number, name: string): Promise<Column> {
+  const { data } = await apiClient.put<Column>(`/columns/${columnId}`, { name })
+  return data
+}
+
+export async function deleteColumn(columnId: number): Promise<void> {
+  await apiClient.delete(`/columns/${columnId}`)
+}
