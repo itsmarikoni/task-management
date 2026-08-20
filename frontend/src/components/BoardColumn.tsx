@@ -5,7 +5,7 @@ import { TaskCard } from './TaskCard'
 import { NewTaskForm } from './NewTaskForm'
 
 interface BoardColumnProps {
-  columnId?: number
+  columnId: number
   title: string
   cards: Card[]
   onAddCard?: (input: { title: string; description: string; priority: string; dueDate: string | null }) => Promise<void>
@@ -13,6 +13,8 @@ interface BoardColumnProps {
   onDeleteCard?: (cardId: number) => Promise<void>
   onMoveCard?: (cardId: number, columnId: number, afterCardId: number | null) => Promise<void>
   onSortCards?: (columnId: number, sortKey: 'PRIORITY' | 'DUE_DATE') => Promise<void>
+  onRenameColumn?: (name: string) => Promise<void>
+  onDeleteColumn?: () => Promise<void>
   draggingCardId: number | null
   onDragStateChange: (cardId: number | null) => void
 }
@@ -30,6 +32,8 @@ export function BoardColumn({
   onDeleteCard,
   onMoveCard,
   onSortCards,
+  onRenameColumn,
+  onDeleteColumn,
   draggingCardId,
   onDragStateChange,
 }: BoardColumnProps) {
@@ -37,15 +41,46 @@ export function BoardColumn({
   const [editingCardId, setEditingCardId] = useState<number | null>(null)
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null)
   const [sorting, setSorting] = useState(false)
+  const [isEditingTitle, setIsEditingTitle] = useState(false)
+  const [titleInput, setTitleInput] = useState(title)
+  const [renaming, setRenaming] = useState(false)
 
   async function handleSort(sortKey: 'PRIORITY' | 'DUE_DATE') {
-    if (!onSortCards || columnId === undefined || sorting) return
+    if (!onSortCards || sorting) return
     try {
       setSorting(true)
       await onSortCards(columnId, sortKey)
     } finally {
       setSorting(false)
     }
+  }
+
+  function startEditingTitle() {
+    if (!onRenameColumn) return
+    setTitleInput(title)
+    setIsEditingTitle(true)
+  }
+
+  async function handleRenameSubmit() {
+    if (!onRenameColumn) return
+    const trimmed = titleInput.trim()
+    if (!trimmed || trimmed === title) {
+      setIsEditingTitle(false)
+      return
+    }
+    try {
+      setRenaming(true)
+      await onRenameColumn(trimmed)
+      setIsEditingTitle(false)
+    } finally {
+      setRenaming(false)
+    }
+  }
+
+  async function handleDeleteColumn() {
+    if (!onDeleteColumn) return
+    if (!window.confirm('このカラムを削除しますか？カラム内のタスクも全て削除され、この操作は取り消せません。')) return
+    await onDeleteColumn()
   }
 
   async function handleSubmit(input: { title: string; description: string; priority: string; dueDate: string | null }) {
@@ -108,7 +143,7 @@ export function BoardColumn({
   async function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault()
     event.stopPropagation()
-    if (!onMoveCard || columnId === undefined) return
+    if (!onMoveCard) return
 
     const draggedCardId = draggingCardId
     const target = dropTarget
@@ -139,31 +174,68 @@ export function BoardColumn({
       onDrop={onMoveCard ? handleDrop : undefined}
     >
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-700">
-          {title} ({cards.length})
-        </h2>
-        {onSortCards && (
-          <div className="flex gap-1">
-            <button
-              type="button"
-              onClick={() => handleSort('PRIORITY')}
-              disabled={sorting}
-              className="rounded px-1.5 py-0.5 text-xs text-gray-500 hover:bg-gray-200 disabled:opacity-50"
-              title="優先度順に並び替え"
-            >
-              優先度
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSort('DUE_DATE')}
-              disabled={sorting}
-              className="rounded px-1.5 py-0.5 text-xs text-gray-500 hover:bg-gray-200 disabled:opacity-50"
-              title="期限順に並び替え"
-            >
-              期限
-            </button>
-          </div>
+        {isEditingTitle ? (
+          <input
+            type="text"
+            value={titleInput}
+            onChange={(event) => setTitleInput(event.target.value)}
+            onBlur={handleRenameSubmit}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault()
+                handleRenameSubmit()
+              } else if (event.key === 'Escape') {
+                setIsEditingTitle(false)
+              }
+            }}
+            maxLength={50}
+            autoFocus
+            disabled={renaming}
+            className="rounded border border-gray-300 px-1 py-0.5 text-sm font-semibold text-gray-700"
+          />
+        ) : (
+          <h2
+            onClick={onRenameColumn ? startEditingTitle : undefined}
+            className={`text-sm font-semibold text-gray-700 ${onRenameColumn ? 'cursor-pointer hover:underline' : ''}`}
+          >
+            {title} ({cards.length})
+          </h2>
         )}
+        <div className="flex items-center gap-1">
+          {onSortCards && (
+            <>
+              <button
+                type="button"
+                onClick={() => handleSort('PRIORITY')}
+                disabled={sorting}
+                className="rounded px-1.5 py-0.5 text-xs text-gray-500 hover:bg-gray-200 disabled:opacity-50"
+                title="優先度順に並び替え"
+              >
+                優先度
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSort('DUE_DATE')}
+                disabled={sorting}
+                className="rounded px-1.5 py-0.5 text-xs text-gray-500 hover:bg-gray-200 disabled:opacity-50"
+                title="期限順に並び替え"
+              >
+                期限
+              </button>
+            </>
+          )}
+          {onDeleteColumn && (
+            <button
+              type="button"
+              aria-label="カラムを削除"
+              onClick={handleDeleteColumn}
+              className="rounded px-1.5 py-0.5 text-xs text-gray-400 hover:bg-red-50 hover:text-red-600"
+              title="カラムを削除"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         {cards.map((card, index) =>
