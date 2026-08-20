@@ -7,15 +7,23 @@ interface BoardColumnProps {
   title: string
   cards: Card[]
   onAddCard?: (input: { title: string; description: string; priority: string; dueDate: string | null }) => Promise<void>
+  onUpdateCard?: (cardId: number, input: { title: string; description: string; priority: string; dueDate: string | null }) => Promise<void>
 }
 
-export function BoardColumn({ title, cards, onAddCard }: BoardColumnProps) {
+export function BoardColumn({ title, cards, onAddCard, onUpdateCard }: BoardColumnProps) {
   const [isAdding, setIsAdding] = useState(false)
+  const [editingCardId, setEditingCardId] = useState<number | null>(null)
 
   async function handleSubmit(input: { title: string; description: string; priority: string; dueDate: string | null }) {
     if (!onAddCard) return
     await onAddCard(input)
     setIsAdding(false)
+  }
+
+  async function handleUpdate(cardId: number, input: { title: string; description: string; priority: string; dueDate: string | null }) {
+    if (!onUpdateCard) return
+    await onUpdateCard(cardId, input)
+    setEditingCardId(null)
   }
 
   return (
@@ -24,9 +32,29 @@ export function BoardColumn({ title, cards, onAddCard }: BoardColumnProps) {
         {title} ({cards.length})
       </h2>
       <div className="flex flex-col gap-2">
-        {cards.map((card) => (
-          <TaskCard key={card.id} card={card} />
-        ))}
+        {cards.map((card) =>
+          editingCardId === card.id ? (
+            <NewTaskForm
+              key={card.id}
+              initialValues={{
+                title: card.title,
+                description: card.description,
+                priority: card.priority,
+                dueDate: card.dueDate,
+              }}
+              submitLabel="保存"
+              errorMessage="タスクの更新に失敗しました。"
+              onSubmit={(input) => handleUpdate(card.id, input)}
+              onCancel={() => setEditingCardId(null)}
+            />
+          ) : (
+            <TaskCard
+              key={card.id}
+              card={card}
+              onClick={onUpdateCard ? () => setEditingCardId(card.id) : undefined}
+            />
+          ),
+        )}
       </div>
       {onAddCard && (
         <div className="mt-2">

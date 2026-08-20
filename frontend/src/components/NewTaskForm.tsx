@@ -4,15 +4,18 @@ import type { FormEvent } from 'react'
 interface NewTaskFormProps {
   onSubmit: (input: { title: string; description: string; priority: string; dueDate: string | null }) => Promise<void>
   onCancel: () => void
+  initialValues?: { title: string; description: string; priority: string; dueDate: string | null }
+  submitLabel?: string
+  errorMessage?: string
 }
 
 const PRIORITIES = ['高', '中', '低']
 
-export function NewTaskForm({ onSubmit, onCancel }: NewTaskFormProps) {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [priority, setPriority] = useState('中')
-  const [dueDate, setDueDate] = useState('')
+export function NewTaskForm({ onSubmit, onCancel, initialValues, submitLabel = '追加', errorMessage = 'タスクの登録に失敗しました。' }: NewTaskFormProps) {
+  const [title, setTitle] = useState(initialValues?.title ?? '')
+  const [description, setDescription] = useState(initialValues?.description ?? '')
+  const [priority, setPriority] = useState(initialValues?.priority ?? '中')
+  const [dueDate, setDueDate] = useState(initialValues?.dueDate ?? '')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -33,7 +36,7 @@ export function NewTaskForm({ onSubmit, onCancel }: NewTaskFormProps) {
         dueDate: dueDate || null,
       })
     } catch {
-      setError('タスクの登録に失敗しました。')
+      setError(errorMessage)
     } finally {
       setSubmitting(false)
     }
@@ -91,7 +94,7 @@ export function NewTaskForm({ onSubmit, onCancel }: NewTaskFormProps) {
           className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           disabled={submitting}
         >
-          追加
+          {submitLabel}
         </button>
       </div>
     </form>
