@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Card, Column } from '../types'
 import { getCardsByColumn, getColumns, sortCardsByColumn } from '../api/columns'
 import type { CardSortKey } from '../api/columns'
-import { createCard, updateCard, updateCardPosition } from '../api/cards'
+import { createCard, deleteCard, updateCard, updateCardPosition } from '../api/cards'
 import { BoardColumn } from './BoardColumn'
 
 const FIXED_COLUMNS = ['未着手', '進行中', '完了']
@@ -99,6 +99,15 @@ export function Board() {
     })
   }
 
+  async function handleDeleteCard(columnId: number, cardId: number) {
+    await deleteCard(cardId)
+    setCardsByColumnId((prev) => {
+      const next = new Map(prev)
+      next.set(columnId, (next.get(columnId) ?? []).filter((card) => card.id !== cardId))
+      return next
+    })
+  }
+
   async function handleMoveCard(cardId: number, targetColumnId: number, afterCardId: number | null) {
     const sourceColumnId = [...cardsByColumnId.entries()].find(([, cards]) =>
       cards.some((card) => card.id === cardId),
@@ -149,6 +158,7 @@ export function Board() {
             cards={cards}
             onAddCard={column ? (input) => handleAddCard(column.id, input) : undefined}
             onUpdateCard={column ? (cardId, input) => handleUpdateCard(column.id, cardId, input) : undefined}
+            onDeleteCard={column ? (cardId) => handleDeleteCard(column.id, cardId) : undefined}
             onMoveCard={column ? handleMoveCard : undefined}
             onSortCards={column ? handleSortCards : undefined}
             draggingCardId={draggingCardId}

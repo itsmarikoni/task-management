@@ -10,6 +10,7 @@ interface BoardColumnProps {
   cards: Card[]
   onAddCard?: (input: { title: string; description: string; priority: string; dueDate: string | null }) => Promise<void>
   onUpdateCard?: (cardId: number, input: { title: string; description: string; priority: string; dueDate: string | null }) => Promise<void>
+  onDeleteCard?: (cardId: number) => Promise<void>
   onMoveCard?: (cardId: number, columnId: number, afterCardId: number | null) => Promise<void>
   onSortCards?: (columnId: number, sortKey: 'PRIORITY' | 'DUE_DATE') => Promise<void>
   draggingCardId: number | null
@@ -26,6 +27,7 @@ export function BoardColumn({
   cards,
   onAddCard,
   onUpdateCard,
+  onDeleteCard,
   onMoveCard,
   onSortCards,
   draggingCardId,
@@ -56,6 +58,12 @@ export function BoardColumn({
     if (!onUpdateCard) return
     await onUpdateCard(cardId, input)
     setEditingCardId(null)
+  }
+
+  async function handleDelete(cardId: number) {
+    if (!onDeleteCard) return
+    if (!window.confirm('このタスクを削除しますか？この操作は取り消せません。')) return
+    await onDeleteCard(cardId)
   }
 
   function handleDragStart(cardId: number) {
@@ -178,6 +186,7 @@ export function BoardColumn({
               key={card.id}
               card={card}
               onClick={onUpdateCard ? () => setEditingCardId(card.id) : undefined}
+              onDelete={onDeleteCard ? () => handleDelete(card.id) : undefined}
               onDragStart={handleDragStart(card.id)}
               onDragEnd={handleDragEnd}
               onDragOver={onMoveCard ? handleCardDragOver(card, index) : undefined}

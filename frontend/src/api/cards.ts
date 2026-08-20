@@ -36,3 +36,7 @@ export async function updateCardPosition(id: number, input: UpdateCardPositionIn
   const { data } = await apiClient.patch<Card>(`/cards/${id}/position`, input)
   return data
 }
+
+export async function deleteCard(id: number): Promise<void> {
+  await apiClient.delete(`/cards/${id}`)
+}

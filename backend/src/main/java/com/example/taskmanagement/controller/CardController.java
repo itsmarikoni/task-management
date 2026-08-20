@@ -7,6 +7,7 @@ import com.example.taskmanagement.dto.CardUpdateRequest;
 import com.example.taskmanagement.service.CardService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +47,12 @@ public class CardController {
 	@PatchMapping("/{id}/position")
 	public CardResponse updateCardPosition(@PathVariable Long id, @Valid @RequestBody CardPositionUpdateRequest request) {
 		return cardService.updateCardPosition(id, request);
+	}
+
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteCard(@PathVariable Long id) {
+		cardService.deleteCard(id);
 	}
 
 }
