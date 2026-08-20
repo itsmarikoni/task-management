@@ -3,7 +3,10 @@ package com.example.taskmanagement.service;
 import com.example.taskmanagement.dto.CardResponse;
 import com.example.taskmanagement.dto.CardSortRequest;
 import com.example.taskmanagement.dto.CardSortRequest.CardSortKey;
+import com.example.taskmanagement.dto.ColumnCreateRequest;
 import com.example.taskmanagement.dto.ColumnResponse;
+import com.example.taskmanagement.dto.ColumnUpdateRequest;
+import com.example.taskmanagement.entity.BoardColumn;
 import com.example.taskmanagement.entity.Card;
 import com.example.taskmanagement.repository.BoardColumnRepository;
 import com.example.taskmanagement.repository.CardRepository;
@@ -58,6 +61,34 @@ public class ColumnService {
 		cardRepository.saveAll(sorted);
 
 		return sorted.stream().map(CardResponse::from).toList();
+	}
+
+	public ColumnResponse createColumn(ColumnCreateRequest request) {
+		int nextDisplayOrder = boardColumnRepository.findFirstByOrderByDisplayOrderDesc()
+				.map(column -> column.getDisplayOrder() + 1)
+				.orElse(0);
+
+		BoardColumn column = new BoardColumn();
+		column.setName(request.name());
+		column.setDisplayOrder(nextDisplayOrder);
+
+		return ColumnResponse.from(boardColumnRepository.save(column));
+	}
+
+	public ColumnResponse updateColumn(Long id, ColumnUpdateRequest request) {
+		BoardColumn column = boardColumnRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Column not found: " + id));
+
+		column.setName(request.name());
+
+		return ColumnResponse.from(boardColumnRepository.save(column));
+	}
+
+	public void deleteColumn(Long id) {
+		if (!boardColumnRepository.existsById(id)) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Column not found: " + id);
+		}
+		boardColumnRepository.deleteById(id);
 	}
 
 }
