@@ -2,6 +2,7 @@ package com.example.taskmanagement.service;
 
 import com.example.taskmanagement.dto.CardCreateRequest;
 import com.example.taskmanagement.dto.CardResponse;
+import com.example.taskmanagement.dto.CardUpdateRequest;
 import com.example.taskmanagement.entity.BoardColumn;
 import com.example.taskmanagement.entity.Card;
 import com.example.taskmanagement.repository.BoardColumnRepository;
@@ -43,6 +44,33 @@ public class CardService {
 		card.setPriority(request.priority());
 		card.setDueDate(request.dueDate());
 		card.setDisplayOrder(nextDisplayOrder);
+
+		return CardResponse.from(cardRepository.save(card));
+	}
+
+	public CardResponse updateCard(Long id, CardUpdateRequest request) {
+		Card card = cardRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found: " + id));
+
+		boolean columnChanged = !card.getColumn().getId().equals(request.columnId());
+
+		if (columnChanged) {
+			BoardColumn column = boardColumnRepository.findById(request.columnId())
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+							"Column not found: " + request.columnId()));
+
+			int nextDisplayOrder = cardRepository.findFirstByColumnIdOrderByDisplayOrderDesc(request.columnId())
+					.map(c -> c.getDisplayOrder() + 1)
+					.orElse(0);
+
+			card.setColumn(column);
+			card.setDisplayOrder(nextDisplayOrder);
+		}
+
+		card.setTitle(request.title());
+		card.setDescription(request.description());
+		card.setPriority(request.priority());
+		card.setDueDate(request.dueDate());
 
 		return CardResponse.from(cardRepository.save(card));
 	}

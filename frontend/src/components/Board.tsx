@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Card, Column } from '../types'
 import { getCardsByColumn, getColumns } from '../api/columns'
-import { createCard } from '../api/cards'
+import { createCard, updateCard } from '../api/cards'
 import { BoardColumn } from './BoardColumn'
 
 const FIXED_COLUMNS = ['未着手', '進行中', '完了']
@@ -81,6 +81,22 @@ export function Board() {
     })
   }
 
+  async function handleUpdateCard(
+    columnId: number,
+    cardId: number,
+    input: { title: string; description: string; priority: string; dueDate: string | null },
+  ) {
+    const updated = await updateCard(cardId, { columnId, ...input })
+    setCardsByColumnId((prev) => {
+      const next = new Map(prev)
+      next.set(
+        columnId,
+        (next.get(columnId) ?? []).map((card) => (card.id === updated.id ? updated : card)),
+      )
+      return next
+    })
+  }
+
   return (
     <div className="flex gap-4 overflow-x-auto p-6">
       {FIXED_COLUMNS.map((label, index) => {
@@ -92,6 +108,7 @@ export function Board() {
             title={label}
             cards={cards}
             onAddCard={column ? (input) => handleAddCard(column.id, input) : undefined}
+            onUpdateCard={column ? (cardId, input) => handleUpdateCard(column.id, cardId, input) : undefined}
           />
         )
       })}
