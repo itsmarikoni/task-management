@@ -89,11 +89,17 @@ npm run dev
 
 | メソッド | パス | 内容 |
 |---|---|---|
+| GET | `/api/health` | ヘルスチェック |
 | GET | `/api/columns` | カラム一覧取得 |
 | GET | `/api/columns/{columnId}/cards` | 指定カラムに属するカード一覧取得 |
+| PATCH | `/api/columns/{columnId}/cards/sort` | カラム内のカードを優先度順・期限順に一括並び替え |
 | GET | `/api/cards/{id}` | カード詳細取得 |
+| POST | `/api/cards` | カード作成 |
+| PUT | `/api/cards/{id}` | カード更新 |
+| PATCH | `/api/cards/{id}/position` | カードの所属カラム・表示順を更新(ドラッグ&ドロップ) |
+| DELETE | `/api/cards/{id}` | カード削除 |
 
-カード・カラムの作成/更新/削除、並び替えなどのAPIは今後追加予定です(詳細は [機能要件](docs/functional-requirements.md) のユースケース一覧を参照)。
+カラムの作成/更新/削除のAPIは今後追加予定です(詳細は [機能要件](docs/functional-requirements.md) のユースケース一覧 UC-01〜03 を参照)。
 
 ## 開発フロー
 
