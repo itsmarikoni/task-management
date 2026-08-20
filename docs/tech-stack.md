@@ -20,7 +20,7 @@
 | フレームワーク | React | 19.2.8 |
 | 言語 | TypeScript | 6.0.2 |
 | ビルドツール | Vite | 8.2.0 |
-| ドラッグ&ドロップ | dnd kit | (未導入・今後追加予定) |
+| ドラッグ&ドロップ | HTML5 Drag and Drop API (ネイティブ) | - |
 | HTTPクライアント | Axios | 1.19.0 |
 | スタイリング | Tailwind CSS | 4.3.3 |
 | Lint | oxlint | 1.75.0 |
