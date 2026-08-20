@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Card, Column } from '../types'
-import { getCardsByColumn, getColumns } from '../api/columns'
+import { getCardsByColumn, getColumns, sortCardsByColumn } from '../api/columns'
+import type { CardSortKey } from '../api/columns'
 import { createCard, updateCard, updateCardPosition } from '../api/cards'
 import { BoardColumn } from './BoardColumn'
 
@@ -23,6 +24,7 @@ export function Board() {
   const [cardsByColumnId, setCardsByColumnId] = useState<Map<number, Card[]>>(new Map())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [draggingCardId, setDraggingCardId] = useState<number | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -125,6 +127,15 @@ export function Board() {
     })
   }
 
+  async function handleSortCards(columnId: number, sortKey: CardSortKey) {
+    const sorted = await sortCardsByColumn(columnId, sortKey)
+    setCardsByColumnId((prev) => {
+      const next = new Map(prev)
+      next.set(columnId, sorted)
+      return next
+    })
+  }
+
   return (
     <div className="flex gap-4 overflow-x-auto p-6">
       {FIXED_COLUMNS.map((label, index) => {
@@ -139,6 +150,9 @@ export function Board() {
             onAddCard={column ? (input) => handleAddCard(column.id, input) : undefined}
             onUpdateCard={column ? (cardId, input) => handleUpdateCard(column.id, cardId, input) : undefined}
             onMoveCard={column ? handleMoveCard : undefined}
+            onSortCards={column ? handleSortCards : undefined}
+            draggingCardId={draggingCardId}
+            onDragStateChange={setDraggingCardId}
           />
         )
       })}
