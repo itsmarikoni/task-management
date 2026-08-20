@@ -123,4 +123,11 @@ public class CardService {
 		return CardResponse.from(card);
 	}
 
+	public void deleteCard(Long id) {
+		if (!cardRepository.existsById(id)) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found: " + id);
+		}
+		cardRepository.deleteById(id);
+	}
+
 }
