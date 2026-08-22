@@ -1,4 +1,5 @@
 import { Board } from './components/Board'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 function App() {
   return (
@@ -6,7 +7,9 @@ function App() {
       <header className="border-b border-gray-200 bg-white px-6 py-4">
         <h1 className="text-lg font-semibold text-gray-900">タスク管理ボード</h1>
       </header>
-      <Board />
+      <ErrorBoundary>
+        <Board />
+      </ErrorBoundary>
     </div>
   )
 }
