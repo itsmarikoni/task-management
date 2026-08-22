@@ -23,9 +23,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-6 text-sm text-red-600">
-          予期しないエラーが発生しました。ページを再読み込みしてください。
-        </div>
+        <div className="p-6 text-sm text-red-600">予期しないエラーが発生しました。ページを再読み込みしてください。</div>
       )
     }
 

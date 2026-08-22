@@ -94,7 +94,10 @@ export function Board() {
       await deleteCard(cardId)
       setCardsByColumnId((prev) => {
         const next = new Map(prev)
-        next.set(columnId, (next.get(columnId) ?? []).filter((card) => card.id !== cardId))
+        next.set(
+          columnId,
+          (next.get(columnId) ?? []).filter((card) => card.id !== cardId),
+        )
         return next
       })
     } catch {

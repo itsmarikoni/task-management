@@ -12,7 +12,13 @@ interface NewTaskFormProps {
 
 const PRIORITIES: Priority[] = ['高', '中', '低']
 
-export function NewTaskForm({ onSubmit, onCancel, initialValues, submitLabel = '追加', errorMessage = 'タスクの登録に失敗しました。' }: NewTaskFormProps) {
+export function NewTaskForm({
+  onSubmit,
+  onCancel,
+  initialValues,
+  submitLabel = '追加',
+  errorMessage = 'タスクの登録に失敗しました。',
+}: NewTaskFormProps) {
   const [title, setTitle] = useState(initialValues?.title ?? '')
   const [description, setDescription] = useState(initialValues?.description ?? '')
   const [priority, setPriority] = useState<Priority>(initialValues?.priority ?? '中')
