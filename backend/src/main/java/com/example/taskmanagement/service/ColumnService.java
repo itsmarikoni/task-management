@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class ColumnService {
 
+	// CardCreateRequest/CardUpdateRequest の @Pattern(regexp = "高|中|低") と対応する値のセット
 	private static final Map<String, Integer> PRIORITY_ORDER = Map.of("高", 0, "中", 1, "低", 2);
 
 	private final BoardColumnRepository boardColumnRepository;

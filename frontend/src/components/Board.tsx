@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import type { Card, Column } from '../types'
+import type { Card, Column, TaskFormInput } from '../types'
 import {
   createColumn,
   deleteColumn,
@@ -66,10 +66,7 @@ export function Board() {
     return <p className="p-6 text-sm text-red-600">{error}</p>
   }
 
-  async function handleAddCard(
-    columnId: number,
-    input: { title: string; description: string; priority: string; dueDate: string | null },
-  ) {
+  async function handleAddCard(columnId: number, input: TaskFormInput) {
     const created = await createCard({ columnId, ...input })
     setCardsByColumnId((prev) => {
       const next = new Map(prev)
@@ -78,11 +75,7 @@ export function Board() {
     })
   }
 
-  async function handleUpdateCard(
-    columnId: number,
-    cardId: number,
-    input: { title: string; description: string; priority: string; dueDate: string | null },
-  ) {
+  async function handleUpdateCard(columnId: number, cardId: number, input: TaskFormInput) {
     const updated = await updateCard(cardId, { columnId, ...input })
     setCardsByColumnId((prev) => {
       const next = new Map(prev)

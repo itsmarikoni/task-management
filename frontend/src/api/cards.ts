@@ -1,12 +1,8 @@
 import { apiClient } from './client'
-import type { Card } from '../types'
+import type { Card, TaskFormInput } from '../types'
 
-export interface CreateCardInput {
+export interface CreateCardInput extends TaskFormInput {
   columnId: number
-  title: string
-  description: string
-  priority: string
-  dueDate: string | null
 }
 
 export async function createCard(input: CreateCardInput): Promise<Card> {
@@ -14,12 +10,8 @@ export async function createCard(input: CreateCardInput): Promise<Card> {
   return data
 }
 
-export interface UpdateCardInput {
+export interface UpdateCardInput extends TaskFormInput {
   columnId: number
-  title: string
-  description: string
-  priority: string
-  dueDate: string | null
 }
 
 export async function updateCard(id: number, input: UpdateCardInput): Promise<Card> {

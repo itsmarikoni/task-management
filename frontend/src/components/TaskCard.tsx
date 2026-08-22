@@ -1,7 +1,7 @@
 import type { DragEvent } from 'react'
-import type { Card } from '../types'
+import type { Card, Priority } from '../types'
 
-const priorityStyles: Record<string, string> = {
+const priorityStyles: Record<Priority, string> = {
   高: 'bg-red-100 text-red-700',
   中: 'bg-yellow-100 text-yellow-700',
   低: 'bg-blue-100 text-blue-700',

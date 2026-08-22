@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { DragEvent } from 'react'
-import type { Card } from '../types'
+import type { Card, TaskFormInput } from '../types'
 import { TaskCard } from './TaskCard'
 import { NewTaskForm } from './NewTaskForm'
 
@@ -8,8 +8,8 @@ interface BoardColumnProps {
   columnId: number
   title: string
   cards: Card[]
-  onAddCard?: (input: { title: string; description: string; priority: string; dueDate: string | null }) => Promise<void>
-  onUpdateCard?: (cardId: number, input: { title: string; description: string; priority: string; dueDate: string | null }) => Promise<void>
+  onAddCard?: (input: TaskFormInput) => Promise<void>
+  onUpdateCard?: (cardId: number, input: TaskFormInput) => Promise<void>
   onDeleteCard?: (cardId: number) => Promise<void>
   onMoveCard?: (cardId: number, columnId: number, afterCardId: number | null) => Promise<void>
   onSortCards?: (columnId: number, sortKey: 'PRIORITY' | 'DUE_DATE') => Promise<void>
@@ -83,13 +83,13 @@ export function BoardColumn({
     await onDeleteColumn()
   }
 
-  async function handleSubmit(input: { title: string; description: string; priority: string; dueDate: string | null }) {
+  async function handleSubmit(input: TaskFormInput) {
     if (!onAddCard) return
     await onAddCard(input)
     setIsAdding(false)
   }
 
-  async function handleUpdate(cardId: number, input: { title: string; description: string; priority: string; dueDate: string | null }) {
+  async function handleUpdate(cardId: number, input: TaskFormInput) {
     if (!onUpdateCard) return
     await onUpdateCard(cardId, input)
     setEditingCardId(null)
