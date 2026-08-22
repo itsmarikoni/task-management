@@ -1,20 +1,27 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import type { Priority, TaskFormInput } from '../types'
 
 interface NewTaskFormProps {
-  onSubmit: (input: { title: string; description: string; priority: string; dueDate: string | null }) => Promise<void>
+  onSubmit: (input: TaskFormInput) => Promise<void>
   onCancel: () => void
-  initialValues?: { title: string; description: string; priority: string; dueDate: string | null }
+  initialValues?: TaskFormInput
   submitLabel?: string
   errorMessage?: string
 }
 
-const PRIORITIES = ['高', '中', '低']
+const PRIORITIES: Priority[] = ['高', '中', '低']
 
-export function NewTaskForm({ onSubmit, onCancel, initialValues, submitLabel = '追加', errorMessage = 'タスクの登録に失敗しました。' }: NewTaskFormProps) {
+export function NewTaskForm({
+  onSubmit,
+  onCancel,
+  initialValues,
+  submitLabel = '追加',
+  errorMessage = 'タスクの登録に失敗しました。',
+}: NewTaskFormProps) {
   const [title, setTitle] = useState(initialValues?.title ?? '')
   const [description, setDescription] = useState(initialValues?.description ?? '')
-  const [priority, setPriority] = useState(initialValues?.priority ?? '中')
+  const [priority, setPriority] = useState<Priority>(initialValues?.priority ?? '中')
   const [dueDate, setDueDate] = useState(initialValues?.dueDate ?? '')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -63,7 +70,7 @@ export function NewTaskForm({ onSubmit, onCancel, initialValues, submitLabel = '
       <div className="flex gap-2">
         <select
           value={priority}
-          onChange={(event) => setPriority(event.target.value)}
+          onChange={(event) => setPriority(event.target.value as Priority)}
           className="rounded border border-gray-300 px-2 py-1 text-sm"
         >
           {PRIORITIES.map((value) => (

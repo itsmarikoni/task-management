@@ -2,6 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "4.1.0"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("com.diffplug.spotless") version "7.0.2"
 }
 
 group = "com.example"
@@ -26,8 +27,24 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testRuntimeOnly("com.h2database:h2")
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+spotless {
+	lineEndings = com.diffplug.spotless.LineEnding.PLATFORM_NATIVE
+	java {
+		target("src/**/*.java")
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+		importOrder()
+	}
+}
+
+tasks.named("check") {
+	dependsOn("spotlessCheck")
 }
