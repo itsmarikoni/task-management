@@ -33,6 +33,7 @@ public class CardService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found: " + id));
 	}
 
+	@Transactional
 	public CardResponse createCard(CardCreateRequest request) {
 		BoardColumn column = boardColumnRepository.findById(request.columnId())
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -53,6 +54,7 @@ public class CardService {
 		return CardResponse.from(cardRepository.save(card));
 	}
 
+	@Transactional
 	public CardResponse updateCard(Long id, CardUpdateRequest request) {
 		Card card = cardRepository.findById(id)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found: " + id));

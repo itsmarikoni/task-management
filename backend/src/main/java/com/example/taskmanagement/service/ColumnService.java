@@ -64,6 +64,7 @@ public class ColumnService {
 		return sorted.stream().map(CardResponse::from).toList();
 	}
 
+	@Transactional
 	public ColumnResponse createColumn(ColumnCreateRequest request) {
 		int nextDisplayOrder = boardColumnRepository.findFirstByOrderByDisplayOrderDesc()
 				.map(column -> column.getDisplayOrder() + 1)
