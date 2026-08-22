@@ -59,3 +59,5 @@ erDiagram
 - カード・カラムそれぞれに表示順(`display_order`)を持たせ、ドラッグ&ドロップによる並べ替えを可能にする。
 - `order` はSQLの予約語(ORDER BY)であるため、カラム名としては使用せず `display_order` とする。
 - カードは必ずいずれか1つのカラムに属する(1カラム:多カード)。
+- スキーマはHibernateの `ddl-auto: update` により、エンティティ定義から自動生成される(Flyway/Liquibase等のバージョン管理されたmigrationは未導入。導入方針は[技術スタック](tech-stack.md)を参照)。
+- アプリ起動時に `data.sql` によりカラム3件(未着手/進行中/完了)・サンプルカード5件のシードデータが投入される(`spring.sql.init.mode: always`)。
