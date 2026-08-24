@@ -57,21 +57,21 @@ export function NewTaskForm({
         onChange={(event) => setTitle(event.target.value)}
         placeholder="タイトル"
         maxLength={100}
-        className="rounded border border-gray-300 px-2 py-1 text-sm"
+        className="min-h-11 rounded border border-gray-300 px-2 py-1 text-sm sm:min-h-0"
         autoFocus
       />
       <textarea
         value={description}
         onChange={(event) => setDescription(event.target.value)}
         placeholder="詳細（任意）"
-        className="rounded border border-gray-300 px-2 py-1 text-sm"
+        className="min-h-11 rounded border border-gray-300 px-2 py-1 text-sm sm:min-h-0"
         rows={2}
       />
       <div className="flex gap-2">
         <select
           value={priority}
           onChange={(event) => setPriority(event.target.value as Priority)}
-          className="rounded border border-gray-300 px-2 py-1 text-sm"
+          className="min-h-11 rounded border border-gray-300 px-2 py-1 text-sm sm:min-h-0"
         >
           {PRIORITIES.map((value) => (
             <option key={value} value={value}>
@@ -83,7 +83,7 @@ export function NewTaskForm({
           type="date"
           value={dueDate}
           onChange={(event) => setDueDate(event.target.value)}
-          className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm"
+          className="min-h-11 flex-1 rounded border border-gray-300 px-2 py-1 text-sm sm:min-h-0"
         />
       </div>
       {error && <p className="text-xs text-red-600">{error}</p>}
@@ -91,14 +91,14 @@ export function NewTaskForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded px-2 py-1 text-xs text-gray-600 hover:bg-gray-100"
+          className="min-h-11 rounded px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 sm:min-h-0"
           disabled={submitting}
         >
           キャンセル
         </button>
         <button
           type="submit"
-          className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="min-h-11 rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50 sm:min-h-0"
           disabled={submitting}
         >
           {submitLabel}

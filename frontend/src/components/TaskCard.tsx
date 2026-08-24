@@ -47,12 +47,12 @@ export function TaskCard({ card, onClick, onDelete, disabled, dropIndicator }: T
             event.stopPropagation()
             onDelete()
           }}
-          className="absolute right-2 top-2 rounded px-1 text-xs text-gray-400 hover:bg-red-50 hover:text-red-600"
+          className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded text-xs text-gray-400 hover:bg-red-50 hover:text-red-600 sm:h-6 sm:w-6"
         >
           ✕
         </button>
       )}
-      <p className="pr-5 text-sm font-medium text-gray-900">{card.title}</p>
+      <p className="pr-10 text-sm font-medium text-gray-900 sm:pr-5">{card.title}</p>
       <div className="mt-2 flex items-center justify-between">
         <span className={`rounded px-2 py-0.5 text-xs font-semibold ${priorityStyle}`}>{card.priority}</span>
         {card.dueDate && <span className="text-xs text-gray-500">{card.dueDate}</span>}

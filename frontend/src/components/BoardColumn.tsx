@@ -141,7 +141,7 @@ export function BoardColumn({
                 type="button"
                 onClick={() => handleSort('PRIORITY')}
                 disabled={sorting}
-                className="rounded px-1.5 py-0.5 text-xs text-gray-500 hover:bg-gray-200 disabled:opacity-50"
+                className="min-h-11 rounded px-2 text-xs text-gray-500 hover:bg-gray-200 disabled:opacity-50 sm:min-h-0 sm:px-1.5 sm:py-0.5"
                 title="優先度順に並び替え"
               >
                 優先度
@@ -150,7 +150,7 @@ export function BoardColumn({
                 type="button"
                 onClick={() => handleSort('DUE_DATE')}
                 disabled={sorting}
-                className="rounded px-1.5 py-0.5 text-xs text-gray-500 hover:bg-gray-200 disabled:opacity-50"
+                className="min-h-11 rounded px-2 text-xs text-gray-500 hover:bg-gray-200 disabled:opacity-50 sm:min-h-0 sm:px-1.5 sm:py-0.5"
                 title="期限順に並び替え"
               >
                 期限
@@ -162,7 +162,7 @@ export function BoardColumn({
               type="button"
               aria-label="カラムを削除"
               onClick={handleDeleteColumn}
-              className="rounded px-1.5 py-0.5 text-xs text-gray-400 hover:bg-red-50 hover:text-red-600"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded text-xs text-gray-400 hover:bg-red-50 hover:text-red-600 sm:min-h-0 sm:min-w-0 sm:px-1.5 sm:py-0.5"
               title="カラムを削除"
             >
               ✕
@@ -208,7 +208,7 @@ export function BoardColumn({
             <button
               type="button"
               onClick={() => setIsAdding(true)}
-              className="w-full rounded px-2 py-1 text-left text-sm text-gray-500 hover:bg-gray-100"
+              className="min-h-11 w-full rounded px-2 py-1 text-left text-sm text-gray-500 hover:bg-gray-100 sm:min-h-0"
             >
               + タスク追加
             </button>
