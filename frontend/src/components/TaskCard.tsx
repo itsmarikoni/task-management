@@ -1,4 +1,5 @@
-import type { DragEvent } from 'react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import type { Card, Priority } from '../types'
 
 const priorityStyles: Record<Priority, string> = {
@@ -11,36 +12,30 @@ interface TaskCardProps {
   card: Card
   onClick?: () => void
   onDelete?: () => void
-  onDragStart?: (event: DragEvent<HTMLDivElement>) => void
-  onDragEnd?: (event: DragEvent<HTMLDivElement>) => void
-  onDragOver?: (event: DragEvent<HTMLDivElement>) => void
-  onDrop?: (event: DragEvent<HTMLDivElement>) => void
-  isDragging?: boolean
+  disabled?: boolean
   dropIndicator?: 'top' | 'bottom' | null
 }
 
-export function TaskCard({
-  card,
-  onClick,
-  onDelete,
-  onDragStart,
-  onDragEnd,
-  onDragOver,
-  onDrop,
-  isDragging,
-  dropIndicator,
-}: TaskCardProps) {
+export function TaskCard({ card, onClick, onDelete, disabled, dropIndicator }: TaskCardProps) {
   const priorityStyle = priorityStyles[card.priority] ?? 'bg-gray-100 text-gray-700'
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: card.id,
+    disabled,
+  })
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+  }
 
   return (
     <div
-      draggable
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       onClick={onClick}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
-      className={`relative rounded-md border border-gray-200 bg-white p-3 shadow-sm ${onClick ? 'cursor-pointer hover:border-gray-300' : ''} ${isDragging ? 'opacity-40' : ''}`}
+      className={`relative touch-none rounded-md border border-gray-200 bg-white p-3 shadow-sm ${onClick ? 'cursor-pointer hover:border-gray-300' : ''} ${isDragging ? 'opacity-40' : ''}`}
     >
       {dropIndicator === 'top' && <div className="absolute inset-x-0 -top-1 h-0.5 rounded bg-blue-500" />}
       {dropIndicator === 'bottom' && <div className="absolute inset-x-0 -bottom-1 h-0.5 rounded bg-blue-500" />}

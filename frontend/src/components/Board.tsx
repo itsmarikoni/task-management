@@ -1,5 +1,15 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core'
 import type { Card, Column, TaskFormInput } from '../types'
 import {
   createColumn,
@@ -19,6 +29,7 @@ export function Board() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [draggingCardId, setDraggingCardId] = useState<number | null>(null)
+  const [dragOverCardId, setDragOverCardId] = useState<number | null>(null)
   const [isAddingColumn, setIsAddingColumn] = useState(false)
   const [newColumnName, setNewColumnName] = useState('')
   const [addColumnError, setAddColumnError] = useState<string | null>(null)
@@ -58,6 +69,11 @@ export function Board() {
       cancelled = true
     }
   }, [])
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
+  )
 
   if (loading) {
     return <p className="p-6 text-sm text-gray-500">読み込み中...</p>
@@ -103,6 +119,52 @@ export function Board() {
     } catch {
       setActionError('タスクの削除に失敗しました。')
     }
+  }
+
+  function findColumnIdForCard(cardId: number): number | undefined {
+    return [...cardsByColumnId.entries()].find(([, cards]) => cards.some((card) => card.id === cardId))?.[0]
+  }
+
+  function resolveDropTarget(overId: string | number): { columnId: number; afterCardId: number | null } | null {
+    if (typeof overId === 'string' && overId.startsWith('column-')) {
+      const columnId = Number(overId.slice('column-'.length))
+      const cards = cardsByColumnId.get(columnId) ?? []
+      const lastCard = cards[cards.length - 1]
+      return { columnId, afterCardId: lastCard ? lastCard.id : null }
+    }
+
+    const overCardId = Number(overId)
+    const columnId = findColumnIdForCard(overCardId)
+    if (columnId === undefined) return null
+    const cards = cardsByColumnId.get(columnId) ?? []
+    const overIndex = cards.findIndex((card) => card.id === overCardId)
+    const previousCard = cards[overIndex - 1]
+    return { columnId, afterCardId: previousCard ? previousCard.id : null }
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    setDraggingCardId(Number(event.active.id))
+  }
+
+  function handleDragOver(event: DragOverEvent) {
+    if (!event.over) {
+      setDragOverCardId(null)
+      return
+    }
+    const overId = event.over.id
+    setDragOverCardId(typeof overId === 'string' && overId.startsWith('column-') ? null : Number(overId))
+  }
+
+  async function handleDragEnd(event: DragEndEvent) {
+    const cardId = draggingCardId
+    setDraggingCardId(null)
+    setDragOverCardId(null)
+    if (cardId === null || !event.over) return
+
+    const target = resolveDropTarget(event.over.id)
+    if (!target || target.afterCardId === cardId) return
+
+    await handleMoveCard(cardId, target.columnId, target.afterCardId)
   }
 
   async function handleMoveCard(cardId: number, targetColumnId: number, afterCardId: number | null) {
@@ -209,25 +271,26 @@ export function Board() {
       {actionError && (
         <p className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{actionError}</p>
       )}
-      <div className="flex gap-4 overflow-x-auto">
-        {columns.map((column) => (
-          <BoardColumn
-            key={column.id}
-            columnId={column.id}
-            title={column.name}
-            cards={cardsByColumnId.get(column.id) ?? []}
-            onAddCard={(input) => handleAddCard(column.id, input)}
-            onUpdateCard={(cardId, input) => handleUpdateCard(column.id, cardId, input)}
-            onDeleteCard={(cardId) => handleDeleteCard(column.id, cardId)}
-            onMoveCard={handleMoveCard}
-            onSortCards={handleSortCards}
-            onRenameColumn={(name) => handleRenameColumn(column.id, name)}
-            onDeleteColumn={() => handleDeleteColumn(column.id)}
-            draggingCardId={draggingCardId}
-            onDragStateChange={setDraggingCardId}
-          />
-        ))}
-        <div className="w-72 flex-shrink-0">
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:overflow-x-auto">
+          {columns.map((column) => (
+            <BoardColumn
+              key={column.id}
+              columnId={column.id}
+              title={column.name}
+              cards={cardsByColumnId.get(column.id) ?? []}
+              onAddCard={(input) => handleAddCard(column.id, input)}
+              onUpdateCard={(cardId, input) => handleUpdateCard(column.id, cardId, input)}
+              onDeleteCard={(cardId) => handleDeleteCard(column.id, cardId)}
+              onSortCards={handleSortCards}
+              onRenameColumn={(name) => handleRenameColumn(column.id, name)}
+              onDeleteColumn={() => handleDeleteColumn(column.id)}
+              draggingCardId={draggingCardId}
+              dragOverCardId={dragOverCardId}
+              canReorder
+            />
+          ))}
+          <div className="w-full flex-shrink-0 sm:w-72">
           {isAddingColumn ? (
             <form
               onSubmit={handleAddColumnSubmit}
@@ -274,8 +337,9 @@ export function Board() {
               + カラム追加
             </button>
           )}
+          </div>
         </div>
-      </div>
+      </DndContext>
     </div>
   )
 }
