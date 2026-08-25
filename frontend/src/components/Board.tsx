@@ -306,52 +306,52 @@ export function Board() {
             />
           ))}
           <div className="w-full flex-shrink-0 sm:w-72">
-          {isAddingColumn ? (
-            <form
-              onSubmit={handleAddColumnSubmit}
-              className="flex flex-col gap-2 rounded-lg border border-gray-200 bg-white p-3"
-            >
-              <input
-                type="text"
-                value={newColumnName}
-                onChange={(event) => setNewColumnName(event.target.value)}
-                placeholder="カラム名"
-                maxLength={50}
-                autoFocus
-                className="rounded border border-gray-300 px-2 py-1 text-sm"
-              />
-              {addColumnError && <p className="text-xs text-red-600">{addColumnError}</p>}
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsAddingColumn(false)
-                    setNewColumnName('')
-                    setAddColumnError(null)
-                  }}
-                  className="min-h-11 rounded px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 sm:min-h-0"
-                  disabled={addingColumn}
-                >
-                  キャンセル
-                </button>
-                <button
-                  type="submit"
-                  className="min-h-11 rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50 sm:min-h-0"
-                  disabled={addingColumn}
-                >
-                  追加
-                </button>
-              </div>
-            </form>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setIsAddingColumn(true)}
-              className="min-h-11 w-full rounded-lg bg-gray-50 px-3 py-2 text-left text-sm text-gray-500 hover:bg-gray-100"
-            >
-              + カラム追加
-            </button>
-          )}
+            {isAddingColumn ? (
+              <form
+                onSubmit={handleAddColumnSubmit}
+                className="flex flex-col gap-2 rounded-lg border border-gray-200 bg-white p-3"
+              >
+                <input
+                  type="text"
+                  value={newColumnName}
+                  onChange={(event) => setNewColumnName(event.target.value)}
+                  placeholder="カラム名"
+                  maxLength={50}
+                  autoFocus
+                  className="rounded border border-gray-300 px-2 py-1 text-sm"
+                />
+                {addColumnError && <p className="text-xs text-red-600">{addColumnError}</p>}
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAddingColumn(false)
+                      setNewColumnName('')
+                      setAddColumnError(null)
+                    }}
+                    className="min-h-11 rounded px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 sm:min-h-0"
+                    disabled={addingColumn}
+                  >
+                    キャンセル
+                  </button>
+                  <button
+                    type="submit"
+                    className="min-h-11 rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50 sm:min-h-0"
+                    disabled={addingColumn}
+                  >
+                    追加
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsAddingColumn(true)}
+                className="min-h-11 w-full rounded-lg bg-gray-50 px-3 py-2 text-left text-sm text-gray-500 hover:bg-gray-100"
+              >
+                + カラム追加
+              </button>
+            )}
           </div>
         </div>
       </DndContext>
