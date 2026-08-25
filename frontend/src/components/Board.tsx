@@ -29,7 +29,7 @@ export function Board() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [draggingCardId, setDraggingCardId] = useState<number | null>(null)
-  const [dragOverCardId, setDragOverCardId] = useState<number | null>(null)
+  const [dragOverTarget, setDragOverTarget] = useState<{ cardId: number } | { columnEndId: number } | null>(null)
   const [isAddingColumn, setIsAddingColumn] = useState(false)
   const [newColumnName, setNewColumnName] = useState('')
   const [addColumnError, setAddColumnError] = useState<string | null>(null)
@@ -125,20 +125,25 @@ export function Board() {
     return [...cardsByColumnId.entries()].find(([, cards]) => cards.some((card) => card.id === cardId))?.[0]
   }
 
-  function resolveDropTarget(overId: string | number): { columnId: number; afterCardId: number | null } | null {
+  function resolveDropTarget(
+    overId: string | number,
+    draggedCardId: number,
+  ): { columnId: number; afterCardId: number | null } | null {
     if (typeof overId === 'string' && overId.startsWith('column-')) {
       const columnId = Number(overId.slice('column-'.length))
-      const cards = cardsByColumnId.get(columnId) ?? []
+      const cards = (cardsByColumnId.get(columnId) ?? []).filter((card) => card.id !== draggedCardId)
       const lastCard = cards[cards.length - 1]
       return { columnId, afterCardId: lastCard ? lastCard.id : null }
     }
 
     const overCardId = Number(overId)
+    if (overCardId === draggedCardId) return null
     const columnId = findColumnIdForCard(overCardId)
     if (columnId === undefined) return null
-    const cards = cardsByColumnId.get(columnId) ?? []
-    const overIndex = cards.findIndex((card) => card.id === overCardId)
-    const previousCard = cards[overIndex - 1]
+
+    const cardsExcludingDragged = (cardsByColumnId.get(columnId) ?? []).filter((card) => card.id !== draggedCardId)
+    const overIndex = cardsExcludingDragged.findIndex((card) => card.id === overCardId)
+    const previousCard = cardsExcludingDragged[overIndex - 1]
     return { columnId, afterCardId: previousCard ? previousCard.id : null }
   }
 
@@ -148,20 +153,24 @@ export function Board() {
 
   function handleDragOver(event: DragOverEvent) {
     if (!event.over) {
-      setDragOverCardId(null)
+      setDragOverTarget(null)
       return
     }
     const overId = event.over.id
-    setDragOverCardId(typeof overId === 'string' && overId.startsWith('column-') ? null : Number(overId))
+    if (typeof overId === 'string' && overId.startsWith('column-')) {
+      setDragOverTarget({ columnEndId: Number(overId.slice('column-'.length)) })
+      return
+    }
+    setDragOverTarget({ cardId: Number(overId) })
   }
 
   async function handleDragEnd(event: DragEndEvent) {
     const cardId = draggingCardId
     setDraggingCardId(null)
-    setDragOverCardId(null)
+    setDragOverTarget(null)
     if (cardId === null || !event.over) return
 
-    const target = resolveDropTarget(event.over.id)
+    const target = resolveDropTarget(event.over.id, cardId)
     if (!target || target.afterCardId === cardId) return
 
     await handleMoveCard(cardId, target.columnId, target.afterCardId)
@@ -286,7 +295,13 @@ export function Board() {
               onRenameColumn={(name) => handleRenameColumn(column.id, name)}
               onDeleteColumn={() => handleDeleteColumn(column.id)}
               draggingCardId={draggingCardId}
-              dragOverCardId={dragOverCardId}
+              dragOverCardId={dragOverTarget && 'cardId' in dragOverTarget ? dragOverTarget.cardId : null}
+              showColumnEndIndicator={
+                draggingCardId !== null &&
+                !!dragOverTarget &&
+                'columnEndId' in dragOverTarget &&
+                dragOverTarget.columnEndId === column.id
+              }
               canReorder
             />
           ))}

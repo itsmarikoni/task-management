@@ -17,6 +17,7 @@ interface BoardColumnProps {
   onDeleteColumn?: () => Promise<void>
   draggingCardId: number | null
   dragOverCardId: number | null
+  showColumnEndIndicator: boolean
   canReorder: boolean
 }
 
@@ -32,6 +33,7 @@ export function BoardColumn({
   onDeleteColumn,
   draggingCardId,
   dragOverCardId,
+  showColumnEndIndicator,
   canReorder,
 }: BoardColumnProps) {
   const [isAdding, setIsAdding] = useState(false)
@@ -171,7 +173,7 @@ export function BoardColumn({
         </div>
       </div>
       <SortableContext items={cards.map((card) => card.id)} strategy={verticalListSortingStrategy}>
-        <div className="flex min-h-8 flex-col gap-2">
+        <div className="flex flex-1 flex-col gap-2">
           {cards.map((card) =>
             editingCardId === card.id ? (
               <NewTaskForm
@@ -198,6 +200,11 @@ export function BoardColumn({
               />
             ),
           )}
+          <div className="relative min-h-12 flex-1">
+            {showColumnEndIndicator && (
+              <div className="absolute inset-x-0 top-0 h-0.5 rounded bg-blue-500" />
+            )}
+          </div>
         </div>
       </SortableContext>
       {onAddCard && (
