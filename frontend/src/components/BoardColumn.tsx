@@ -201,9 +201,7 @@ export function BoardColumn({
             ),
           )}
           <div className="relative min-h-12 flex-1">
-            {showColumnEndIndicator && (
-              <div className="absolute inset-x-0 top-0 h-0.5 rounded bg-blue-500" />
-            )}
+            {showColumnEndIndicator && <div className="absolute inset-x-0 top-0 h-0.5 rounded bg-blue-500" />}
           </div>
         </div>
       </SortableContext>

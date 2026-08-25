@@ -150,5 +150,5 @@ OpenAPI(springdoc-openapi/Swagger)は未導入(導入方針は[技術スタッ�
 ## 4. 共通事項
 
 - 全エンドポイントで認証・認可は行っていない(現状APIは無認証でオープン)。
-- バリデーションエラー時は Spring Boot デフォルトの `400 Bad Request` レスポンスを返す(独自のエラーレスポンス形式・`@RestControllerAdvice` は未導入)。
-- CORS設定は明示的に行っていない。
+- エラーレスポンスは `@RestControllerAdvice`(`GlobalExceptionHandler`)で統一している。バリデーションエラー(`MethodArgumentNotValidException`)は `400 Bad Request`、`ResponseStatusException`はそのステータス、その他の予期しない例外は `500 Internal Server Error` を返す。レスポンスボディは共通形式(`timestamp` / `status` / `error` / `message`)。
+- CORSは `WebConfig` で `/api/**` に対して明示的に設定している。許可オリジンはフロントエンドの開発サーバー(`http://localhost:5173`)。スマホ実機からLAN経由で確認する場合は、その端末からアクセスするIP(例: `http://192.168.x.x:5173`)を一時的に許可オリジンへ追加する必要がある。オリジンが変わる場合は `WebConfig` を更新する。
