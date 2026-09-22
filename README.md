@@ -19,6 +19,7 @@
 | [画面設計](docs/screen-design.md) | 画面一覧、画面遷移図、ワイヤーフレーム |
 | [データベース設計](docs/database-design.md) | ER図、テーブル定義 |
 | [技術スタック](docs/tech-stack.md) | バックエンド/フロントエンド/DBの採用技術とバージョン |
+| [インフラ構成](docs/infrastructure.md) | AWS構成図、リクエストの流れ、デプロイ方針 |
 
 ## 技術スタック
 
@@ -36,9 +37,11 @@
 task management/
 ├── backend/                          # Spring Boot によるREST API (Java)
 ├── frontend/                         # React + Vite によるSPA (TypeScript)
+├── infra/                            # Terraformによるインフラ定義(IaC、AWS)
 ├── docs/                             # 要件定義・設計ドキュメント
 │   ├── database-design.md            # データベース設計(ER図、テーブル定義)
 │   ├── functional-requirements.md    # 機能要件・ユースケース
+│   ├── infrastructure.md             # インフラ構成(AWS構成図、デプロイ方針)
 │   ├── requirements.md               # 要件定義書
 │   ├── screen-design.md              # 画面設計
 │   └── tech-stack.md                 # 技術スタック
