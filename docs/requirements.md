@@ -74,3 +74,9 @@ ER図、テーブル定義(columns / cards)、設計上の補足事項をまと�
 バックエンドに Java 25 / Spring Boot 4.1.0、フロントエンドに React 19.2.8 / TypeScript / Vite、データベースに PostgreSQL 17 を採用する。バージョン管理には Git + GitHub を用いる。
 
 → 詳細は [技術スタック](tech-stack.md) を参照。
+
+## 9. インフラ構成
+
+AWS上にEC2(フロントエンド・バックエンド同居)とRDS(PostgreSQL)を構築し、Terraform(IaC)でデプロイする。構成図、リクエストの流れ、デプロイ方針をまとめている。
+
+→ 詳細は [インフラ構成](infrastructure.md) を参照。
